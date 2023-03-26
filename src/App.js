@@ -1,26 +1,23 @@
 import { Component } from 'react';
 import './App.css';
+import CardList from './component/card-list/CardList';
+import SearchBox from './component/search-box/SearchBox';
+import Title from './component/title/Title';
 
 class App extends Component {
 	constructor() {
 		super();
 		this.state = {
-			users: [
-				{
-					id: 1,
-					name: 'Apple',
-				},
-				{
-					id: 2,
-					name: 'Banana',
-				},
-				{
-					id: 3,
-					name: 'Coco',
-				},
-			],
+			users: [],
 			searchField: '',
 		};
+	}
+
+	componentDidMount() {
+		fetch('https://rickandmortyapi.com/api/character')
+			.then((res) => res.json())
+			.then((data) => this.setState({ users: data.results }));
+		console.log(this.state.users);
 	}
 
 	onSearchChange = (e) => {
@@ -35,18 +32,15 @@ class App extends Component {
 		const filteredUsers = users.filter((user) => {
 			return user.name.toLowerCase().includes(searchField);
 		});
+
 		return (
 			<div>
-				<h1> App component</h1>
-				<input
-					type='text'
-					placeholder='search users'
-					onChange={this.onSearchChange}
+				<Title title='Title Here' subtitle='Subtitle if needed' />
+				<SearchBox
+					onSearchChange={this.onSearchChange}
+					placeholder='Search Users'
 				/>
-				{filteredUsers.map((user) => {
-					const { id, name } = user;
-					return <h2 key={id}>{name} </h2>;
-				})}
+				<CardList filteredUsers={filteredUsers} />
 			</div>
 		);
 	}
